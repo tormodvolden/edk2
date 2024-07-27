@@ -1465,7 +1465,7 @@ UpdateArgcArgv (
   BOOLEAN  StripParamQuotation;
 
   ASSERT (ShellParameters != NULL);
-  StripParamQuotation = TRUE;
+  StripParamQuotation = FALSE;
 
   if (OldArgc != NULL) {
     *OldArgc = ShellParameters->Argc;
@@ -1475,8 +1475,8 @@ UpdateArgcArgv (
     *OldArgv = ShellParameters->Argv;
   }
 
-  if (Type == Script_File_Name) {
-    StripParamQuotation = FALSE;
+  if (Type == Efi_Application) {
+    StripParamQuotation = TRUE;
   }
 
   return ParseCommandLineToArgs (

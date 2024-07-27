@@ -529,14 +529,15 @@ IsUnicodeFile (
 }
 
 /**
-  Strips out quotes sections of a string.
+  Blanks out quoted sections of a string.
 
   All of the characters between quotes is replaced with spaces.
 
   @param[in, out] TheString  A pointer to the string to update.
 **/
+static
 VOID
-StripQuotes (
+BlankQuoted (
   IN OUT CHAR16  *TheString
   )
 {
@@ -771,7 +772,7 @@ UpdateStdInStdOutStdErr (
   Split         = NULL;
   FirstLocation = CommandLineCopy + StrLen (CommandLineCopy);
 
-  StripQuotes (CommandLineCopy);
+  BlankQuoted (CommandLineCopy);
 
   if (!IsListEmpty (&ShellInfoObject.SplitList.Link)) {
     Split = (SPLIT_LIST *)GetFirstNode (&ShellInfoObject.SplitList.Link);

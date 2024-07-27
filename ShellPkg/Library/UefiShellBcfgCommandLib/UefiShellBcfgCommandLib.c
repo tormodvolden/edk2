@@ -588,6 +588,7 @@ BcfgAdd (
   EFI_SHELL_FILE_INFO       *Arg;
   EFI_SHELL_FILE_INFO       *FileList;
   CHAR16                    OptionStr[40];
+  CHAR16                    *CleanDesc;
   UINTN                     DescSize, FilePathSize;
   BOOLEAN                   Found;
   UINTN                     TargetLocation;
@@ -798,10 +799,14 @@ BcfgAdd (
   }
 
   if (ShellStatus == SHELL_SUCCESS) {
+    ShellStatus = ShellStripQuotes (Desc, &CleanDesc);
+  }
+
+  if (ShellStatus == SHELL_SUCCESS) {
     //
     // Add the option
     //
-    DescSize = StrSize (Desc);
+    DescSize = StrSize (CleanDesc);
     if (FilePath == NULL) {
       ASSERT (FilePath != NULL);
       ShellStatus    = SHELL_UNSUPPORTED;
@@ -820,7 +825,7 @@ BcfgAdd (
       *((UINT16 *)TempByteBuffer) = (UINT16)FilePathSize;     // FilePathListLength
       TempByteBuffer             += sizeof (UINT16);
 
-      CopyMem (TempByteBuffer, Desc, DescSize);
+      CopyMem (TempByteBuffer, CleanDesc, DescSize);
       TempByteBuffer += DescSize;
       ASSERT (FilePath != NULL);
       CopyMem (TempByteBuffer, FilePath, FilePathSize);
@@ -838,6 +843,8 @@ BcfgAdd (
     } else {
       Status = EFI_OUT_OF_RESOURCES;
     }
+
+    FreePool (CleanDesc);
 
     if (EFI_ERROR (Status)) {
       ShellPrintHiiEx (-1, -1, NULL, STRING_TOKEN (STR_BCFG_SET_VAR_FAIL), gShellBcfgHiiHandle, L"bcfg", OptionStr);

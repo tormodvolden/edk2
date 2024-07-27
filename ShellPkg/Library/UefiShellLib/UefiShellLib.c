@@ -1647,7 +1647,7 @@ ShellOpenFileMetaArg (
 
   CleanFilePathStr = NULL;
 
-  Status = InternalShellStripQuotes (Arg, &CleanFilePathStr);
+  Status = ShellStripQuotes (Arg, &CleanFilePathStr);
   if (EFI_ERROR (Status)) {
     return Status;
   }
@@ -4573,7 +4573,7 @@ ShellDeleteFileByName (
   @retval EFI_SUCCESS            The operation was successful.
 **/
 EFI_STATUS
-InternalShellStripQuotes (
+ShellStripQuotes (
   IN  CONST CHAR16  *OriginalString,
   OUT CHAR16        **CleanString
   )

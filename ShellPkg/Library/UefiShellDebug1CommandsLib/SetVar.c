@@ -123,6 +123,7 @@ ParseParameterData (
   UINT64                    HexNumber;
   UINTN                     HexNumberLen;
   UINTN                     Size;
+  CHAR16                    *CleanData;
   CHAR8                     *AsciiBuffer;
   DATA_TYPE                 DataType;
   EFI_DEVICE_PATH_PROTOCOL  *DevPath;
@@ -187,13 +188,23 @@ ParseParameterData (
       Data = Data + 1;
     }
 
-    AsciiBuffer = AllocateZeroPool (StrSize (Data) / 2);
+    Status = ShellStripQuotes(Data, &CleanData);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+
+    if (*CleanData == CHAR_NULL) {
+      *BufferSize = 0;
+      return EFI_SUCCESS;
+    }
+
+    AsciiBuffer = AllocateZeroPool (StrSize (CleanData) / 2);
     if (AsciiBuffer == NULL) {
       Status = EFI_OUT_OF_RESOURCES;
     } else {
-      AsciiSPrint (AsciiBuffer, StrSize (Data) / 2, "%s", (CHAR8 *)Data);
+      AsciiSPrint (AsciiBuffer, StrSize (CleanData) / 2, "%s", (CHAR8 *)Data);
 
-      Size = StrSize (Data) / 2 - 1;
+      Size = StrSize (CleanData) / 2 - 1;
       if ((Buffer != NULL) && (*BufferSize >= Size)) {
         CopyMem (Buffer, AsciiBuffer, Size);
       } else {
@@ -203,6 +214,7 @@ ParseParameterData (
       *BufferSize = Size;
     }
 
+    FreePool (CleanData);
     SHELL_FREE_NON_NULL (AsciiBuffer);
   } else if (DataType == DataTypeUnicode) {
     //
@@ -212,13 +224,25 @@ ParseParameterData (
       Data = Data + 1;
     }
 
-    Size = StrSize (Data) - sizeof (CHAR16);
+    Status = ShellStripQuotes(Data, &CleanData);
+    if (EFI_ERROR (Status)) {
+      return Status;
+    }
+
+    if (*CleanData == CHAR_NULL) {
+      *BufferSize = 0;
+      return EFI_SUCCESS;
+    }
+
+    Size = StrSize (CleanData) - sizeof (CHAR16);
+
     if ((Buffer != NULL) && (*BufferSize >= Size)) {
-      CopyMem (Buffer, Data, Size);
+      CopyMem (Buffer, CleanData, Size);
     } else {
       Status = EFI_BUFFER_TOO_SMALL;
     }
 
+    FreePool (CleanData);
     *BufferSize = Size;
   } else if (DataType == DataTypeDevicePath) {
     if (*Data == L'P') {

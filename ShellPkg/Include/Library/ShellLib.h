@@ -1428,4 +1428,24 @@ ShellPrintHelp (
   IN BOOLEAN       PrintCommandText
   );
 
+/**
+  Strip off surrounding double-quotation marks of the string.
+  If the string starts with a quote, it will be removed
+  along with the trailing quote, if also present.
+  Other quotation marks in the string are not affected.
+
+  @param[in]    OriginalString   pointer to the string to be cleaned.
+  @param[out]   CleanString      The new string with surrounding quotes removed.
+                                 Memory allocated in the function and free
+                                 by caller.
+
+  @retval EFI_OUT_OF_RESOURCES   A memory allocation failed.
+  @retval EFI_SUCCESS   The operation was successful.
+**/
+EFI_STATUS
+ShellStripQuotes (
+  IN  CONST CHAR16  *OriginalString,
+  OUT CHAR16        **CleanString
+  );
+
 #endif // __SHELL_LIB__

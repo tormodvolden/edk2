@@ -4559,14 +4559,18 @@ ShellDeleteFileByName (
 }
 
 /**
-  Cleans off all the quotes in the string.
+  Strip off surrounding double-quotation marks of the string.
+  If the string starts with a quote, it will be removed
+  along with the trailing quote, if also present.
+  Other quotation marks in the string are not affected.
 
-  @param[in]     OriginalString   pointer to the string to be cleaned.
-  @param[out]   CleanString      The new string with all quotes removed.
-                                                  Memory allocated in the function and free
-                                                  by caller.
+  @param[in]    OriginalString   Pointer to the string to be cleaned.
+  @param[out]   CleanString      The new string with surrounding quotes removed.
+                                 Memory allocated in the function and free
+                                 by caller.
 
-  @retval EFI_SUCCESS   The operation was successful.
+  @retval EFI_OUT_OF_RESOURCES   A memory allocation failed.
+  @retval EFI_SUCCESS            The operation was successful.
 **/
 EFI_STATUS
 InternalShellStripQuotes (
@@ -4575,6 +4579,7 @@ InternalShellStripQuotes (
   )
 {
   CHAR16  *Walker;
+  UINTN   OrigSize;
 
   if ((OriginalString == NULL) || (CleanString == NULL)) {
     return EFI_INVALID_PARAMETER;
@@ -4585,9 +4590,12 @@ InternalShellStripQuotes (
     return EFI_OUT_OF_RESOURCES;
   }
 
-  for (Walker = *CleanString; Walker != NULL && *Walker != CHAR_NULL; Walker++) {
-    if (*Walker == L'\"') {
-      CopyMem (Walker, Walker+1, StrSize (Walker) - sizeof (Walker[0]));
+  Walker = *CleanString;
+  if (*Walker == L'\"') {
+    OrigSize = StrSize (Walker);
+    CopyMem (Walker, Walker + 1, OrigSize - sizeof (Walker[0]));
+    if ((OrigSize > 4) && (Walker[OrigSize / 2 - 3] == L'\"')) {
+      Walker[OrigSize / 2 - 3] = CHAR_NULL;
     }
   }
 

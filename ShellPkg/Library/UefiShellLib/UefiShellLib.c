@@ -1512,6 +1512,7 @@ typedef struct {
 
   @retval the resultant head of the double linked new format list;
 **/
+static
 LIST_ENTRY *
 InternalShellConvertFileListType (
   IN LIST_ENTRY      *FileList,
@@ -3840,6 +3841,7 @@ ShellPromptForResponseHii (
   @retval TRUE        It is all numeric (dec/hex) characters.
   @retval FALSE       There is a non-numeric character.
 **/
+static
 BOOLEAN
 InternalShellIsHexOrDecimalNumber (
   IN CONST CHAR16   *String,

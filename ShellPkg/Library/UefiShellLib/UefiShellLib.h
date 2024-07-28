@@ -61,6 +61,7 @@ typedef struct  {
   @retval TRUE        It is all numeric (dec/hex) characters.
   @retval FALSE       There is a non-numeric character.
 **/
+static
 BOOLEAN
 InternalShellIsHexOrDecimalNumber (
   IN CONST CHAR16   *String,

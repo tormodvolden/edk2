@@ -333,7 +333,7 @@ ValidateAndCopyFiles (
   ASSERT (FileList != NULL);
   ASSERT (DestDir  != NULL);
 
-  Status = ShellLevel2StripQuotes (DestDir, &CleanFilePathStr);
+  Status = ShellStripQuotes (DestDir, &CleanFilePathStr);
   if (EFI_ERROR (Status)) {
     if (Status == EFI_OUT_OF_RESOURCES) {
       return SHELL_OUT_OF_RESOURCES;

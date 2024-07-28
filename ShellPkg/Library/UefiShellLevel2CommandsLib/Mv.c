@@ -574,7 +574,7 @@ ValidateAndMoveFiles (
     }
   }
 
-  Status = ShellLevel2StripQuotes (DestParameter, &CleanFilePathStr);
+  Status = ShellStripQuotes (DestParameter, &CleanFilePathStr);
   if (EFI_ERROR (Status)) {
     SHELL_FREE_NON_NULL (FullCwd);
     if (Status == EFI_OUT_OF_RESOURCES) {
